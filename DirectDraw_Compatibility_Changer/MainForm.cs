@@ -24,9 +24,6 @@ using System.Runtime.InteropServices;
 
 namespace DirectDraw_Colourfix {
     public partial class MainForm : Form {
-        public const string RegDDPath = (@"SOFTWARE\Microsoft\DirectDraw\");
-        public const string RegDDPathWow = (@"SOFTWARE\Wow6432Node\Microsoft\DirectDraw\");
-
         public RegEdit Regedit { get; set; }
 
         public MainForm() {
@@ -69,7 +66,7 @@ namespace DirectDraw_Colourfix {
                 GameListItem game = new GameListItem() {
                     Name = thisGameName,
                     // get the compatibility information for this game
-                    CompatibilityInformation = new CompatibilityInformation(thisGameName, Regedit.UseWowNode)
+                    CompatibilityInformation = Regedit.GetCompatibilityInformationFromKey(thisGameName)
                 };
 
                 // add the game to the games list
@@ -83,33 +80,25 @@ namespace DirectDraw_Colourfix {
 
             // update the GUI
             if (game != null) {
-                txtKeyName.Text = game.CompatibilityInformation.KeyName;
-                txtName.Text = game.CompatibilityInformation.Name;
-                txtID.Text = game.CompatibilityInformation.ID;
-                txtFlags.Text = game.CompatibilityInformation.Flags;
+                UpdateCompatibilityValues(game.CompatibilityInformation);
             }
         }
 
         private void btnLoadLastPlayed_Click(object sender, EventArgs e) {
-            string LastName;
-            string LastID;
-            // pull the most recent application from the registry
-            RegistryKey Reg = Registry.LocalMachine;
-            if (Regedit.UseWowNode) {
-                Reg = Reg.OpenSubKey(RegDDPathWow + @"MostRecentApplication\");
-            }
-            else {
-                Reg = Reg.OpenSubKey(RegDDPath + @"MostRecentApplication\");
-            }
-            LastName = (string)Reg.GetValue("Name");
-            byte[] LastIDBytes = BitConverter.GetBytes((int)Reg.GetValue("ID"));
-            LastID = Utilities.ByteArrayToHex(LastIDBytes);
+            // get info about the last played game
+            CompatibilityInformation compatInfo = Regedit.GetCompatibilityInformationForLastPlayed();
 
             // update the GUI
-            txtKeyName.Text = LastName.Substring(0, LastName.LastIndexOf(".exe", StringComparison.OrdinalIgnoreCase));
-            txtName.Text = LastName;
-            txtID.Text = LastID;
-            txtFlags.Text = "";
+            UpdateCompatibilityValues(compatInfo);
+        }
+
+        private void UpdateCompatibilityValues(CompatibilityInformation compatInfo) {
+            if (compatInfo != null) {
+                txtKeyName.Text = compatInfo.KeyName;
+                txtName.Text = compatInfo.Name;
+                txtID.Text = compatInfo.ID;
+                txtFlags.Text = compatInfo.Flags;
+            }
         }
 
         private void btnSaveValues_Click(object sender, EventArgs e) {
@@ -118,7 +107,6 @@ namespace DirectDraw_Colourfix {
                 Utilities.StringToByteArray(txtFlags.Text)); // save the values to the registry
                                                              // now update the list to show the changes
             UpdateGameList();
-
         }
 
         private void txtFlags_KeyPress(object sender, System.Windows.Forms.KeyPressEventArgs e) {
