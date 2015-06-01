@@ -103,9 +103,18 @@ namespace DirectDraw_Colourfix {
 
         private void btnSaveValues_Click(object sender, EventArgs e) {
             // save the key in the registry
-            Regedit.SaveKey(txtKeyName.Text, txtName.Text, Utilities.StringToByteArray(txtID.Text),
+            bool success = Regedit.SaveKey(txtKeyName.Text, txtName.Text, Utilities.StringToByteArray(txtID.Text),
                 Utilities.StringToByteArray(txtFlags.Text)); // save the values to the registry
                                                              // now update the list to show the changes
+
+            // handle error
+            if(!success) {
+                MessageBox.Show("Could not add or save key. Please check you have sufficient privileges.",
+                    "Error",
+                    MessageBoxButtons.OK,
+                    MessageBoxIcon.Error);
+            }
+            
             UpdateGameList();
         }
 
@@ -135,9 +144,14 @@ namespace DirectDraw_Colourfix {
                     MessageBoxIcon.Warning);
 
                 // confirm for delete
-                if (result == DialogResult.OK) {
+                if (result == DialogResult.Yes) {
                     // delete the key
-                    Regedit.DeleteKey(keyName);
+                    if (!Regedit.DeleteKey(keyName)) {
+                        MessageBox.Show("Could not delete key. Please check you have sufficient privileges.",
+                    "Error",
+                    MessageBoxButtons.OK,
+                    MessageBoxIcon.Error);
+                    }
                 }
             }
 

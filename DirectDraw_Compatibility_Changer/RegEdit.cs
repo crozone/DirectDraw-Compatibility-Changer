@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Security;
 using System.Text;
 using System.Threading.Tasks;
 using Microsoft.Win32;
@@ -17,7 +18,6 @@ namespace DirectDraw_Colourfix {
         }
 
         public string[] GetCurrentApps() {
-
             RegistryKey Reg = Registry.LocalMachine;
             if (UseWowNode) {
                 Reg = Reg.OpenSubKey(RegDDPathWow + @"Compatibility\"); // path to 64 bit DirectDraw compatibility 
@@ -27,32 +27,48 @@ namespace DirectDraw_Colourfix {
             }
 
             return Reg.GetSubKeyNames();
-
         }
 
-        public void SaveKey(string KeyName, string exeName, byte[] exeID, byte[] exeFlags) {
-            RegistryKey Reg = Registry.LocalMachine;
-            if (UseWowNode) {
-                Reg = Reg.CreateSubKey(RegDDPathWow + @"Compatibility\" + KeyName, RegistryKeyPermissionCheck.ReadWriteSubTree);
+        public bool SaveKey(string KeyName, string exeName, byte[] exeID, byte[] exeFlags) {
+            try {
+                RegistryKey Reg = Registry.LocalMachine;
+                if (UseWowNode) {
+                    Reg = Reg.CreateSubKey(RegDDPathWow + @"Compatibility\" + KeyName, RegistryKeyPermissionCheck.ReadWriteSubTree);
+                }
+                else {
+                    Reg = Reg.CreateSubKey(RegDDPath + @"Compatibility\" + KeyName, RegistryKeyPermissionCheck.ReadWriteSubTree);
+                }
+                Reg.SetValue("Name", exeName, RegistryValueKind.String);
+                Reg.SetValue("ID", exeID, RegistryValueKind.Binary);
+                Reg.SetValue("Flags", exeFlags, RegistryValueKind.Binary);
             }
-            else {
-                Reg = Reg.CreateSubKey(RegDDPath + @"Compatibility\" + KeyName, RegistryKeyPermissionCheck.ReadWriteSubTree);
+            catch (UnauthorizedAccessException) {
+                return false;
             }
-            Reg.SetValue("Name", exeName, RegistryValueKind.String);
-            Reg.SetValue("ID", exeID, RegistryValueKind.Binary);
-            Reg.SetValue("Flags", exeFlags, RegistryValueKind.Binary);
+            catch (SecurityException) {
+                return false;
+            }
+            return true;
         }
 
-        public void DeleteKey(string KeyName) {
-            RegistryKey Reg = Registry.LocalMachine;
-            if (UseWowNode) {
-                Reg = Reg.OpenSubKey(RegDDPathWow + @"Compatibility\", true);
+        public bool DeleteKey(string KeyName) {
+            try {
+                RegistryKey Reg = Registry.LocalMachine;
+                if (UseWowNode) {
+                    Reg = Reg.OpenSubKey(RegDDPathWow + @"Compatibility\", true);
+                }
+                else {
+                    Reg = Reg.OpenSubKey(RegDDPath + @"Compatibility\", true);
+                }
+                Reg.DeleteSubKey(KeyName, false);
             }
-            else {
-                Reg = Reg.OpenSubKey(RegDDPath + @"Compatibility\", true);
+            catch (UnauthorizedAccessException) {
+                return false;
             }
-            Reg.DeleteSubKey(KeyName, false);
-
+            catch (SecurityException) {
+                return false;
+            }
+            return true;
         }
 
         public CompatibilityInformation GetCompatibilityInformationFromKey(string keyname) {
