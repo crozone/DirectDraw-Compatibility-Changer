@@ -13,6 +13,7 @@ namespace DirectDraw_Colourfix
         static void Main()
         {
             Application.EnableVisualStyles();
+            Application.SetHighDpiMode(HighDpiMode.PerMonitorV2); // SystemAware is recommended
             Application.SetCompatibleTextRenderingDefault(false);
             Application.Run(new MainForm());
         }
