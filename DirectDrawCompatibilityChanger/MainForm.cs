@@ -89,10 +89,11 @@ namespace DirectDrawCompatibilityChanger
         }
 
         private void btnSaveValues_Click(object sender, EventArgs e) {
-            // save the key in the registry
-            bool success = Regedit.SaveKey(txtKeyName.Text, txtName.Text, Utilities.StringToByteArray(txtID.Text),
-                Utilities.StringToByteArray(txtFlags.Text)); // save the values to the registry
-                                                             // now update the list to show the changes
+            byte[] idBytes = Convert.FromHexString(txtID.Text);
+            byte[] flagBytes = Convert.FromHexString(txtFlags.Text);
+
+            // Save the values to the registry
+            bool success = Regedit.SaveKey(txtKeyName.Text, txtName.Text, idBytes, flagBytes);
 
             // handle error
             if(!success) {
@@ -102,6 +103,7 @@ namespace DirectDrawCompatibilityChanger
                     MessageBoxIcon.Error);
             }
             
+            // Update list to show changes
             UpdateGameList();
         }
 

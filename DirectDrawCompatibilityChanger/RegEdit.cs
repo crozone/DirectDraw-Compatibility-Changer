@@ -85,15 +85,15 @@ namespace DirectDrawCompatibilityChanger
 
             if (registryKey.GetValueKind("ID") == RegistryValueKind.Binary) {
                 byte[] idBytes = (byte[])registryKey.GetValue("ID");
-                compatInfo.ID = Utilities.ByteArrayToHex(idBytes);
+                compatInfo.ID = Convert.ToHexString(idBytes);
             }
             else if (registryKey.GetValueKind("ID") == RegistryValueKind.DWord) {
                 byte[] idBytes = BitConverter.GetBytes((int)registryKey.GetValue("ID"));
-                compatInfo.ID = Utilities.ByteArrayToHex(idBytes);
+                compatInfo.ID = Convert.ToHexString(idBytes);
             }
 
             byte[] flagBytes = (byte[])registryKey.GetValue("Flags");
-            compatInfo.Flags = Utilities.ByteArrayToHex(flagBytes);
+            compatInfo.Flags = Convert.ToHexString(flagBytes);
 
             return compatInfo;
         }
@@ -110,8 +110,8 @@ namespace DirectDrawCompatibilityChanger
                 registryKey = registryKey.OpenSubKey(RegistryDirectDrawPath + @"MostRecentApplication\");
             }
             lastName = (string)registryKey.GetValue("Name");
-            byte[] LastIDBytes = BitConverter.GetBytes((int)registryKey.GetValue("ID"));
-            lastID = Utilities.ByteArrayToHex(LastIDBytes);
+            byte[] lastIDBytes = BitConverter.GetBytes((int)registryKey.GetValue("ID"));
+            lastID = Convert.ToHexString(lastIDBytes);
 
             CompatibilityInformation compatInfo = new CompatibilityInformation() {
                 KeyName = lastName.Substring(0, lastName.LastIndexOf(".exe", StringComparison.OrdinalIgnoreCase)),
