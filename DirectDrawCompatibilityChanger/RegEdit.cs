@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Runtime.Versioning;
 using System.Security;
 
 using Microsoft.Win32;
@@ -15,6 +16,7 @@ namespace DirectDrawCompatibilityChanger
             UseWowNode = useWowNode;
         }
 
+        [SupportedOSPlatform("windows")]
         public string[] GetCurrentApps() {
             RegistryKey registryKey = Registry.LocalMachine;
             if (UseWowNode) {
@@ -27,6 +29,7 @@ namespace DirectDrawCompatibilityChanger
             return registryKey.GetSubKeyNames();
         }
 
+        [SupportedOSPlatform("windows")]
         public bool SaveKey(string KeyName, string exeName, byte[] exeID, byte[] exeFlags) {
             try {
                 RegistryKey registryKey = Registry.LocalMachine;
@@ -49,6 +52,7 @@ namespace DirectDrawCompatibilityChanger
             return true;
         }
 
+        [SupportedOSPlatform("windows")]
         public bool DeleteKey(string KeyName) {
             try {
                 RegistryKey registryKey = Registry.LocalMachine;
@@ -69,6 +73,7 @@ namespace DirectDrawCompatibilityChanger
             return true;
         }
 
+        [SupportedOSPlatform("windows")]
         public CompatibilityInformation GetCompatibilityInformationFromKey(string keyname) {
             CompatibilityInformation compatInfo = new CompatibilityInformation();
 
@@ -98,6 +103,7 @@ namespace DirectDrawCompatibilityChanger
             return compatInfo;
         }
 
+        [SupportedOSPlatform("windows")]
         public CompatibilityInformation GetCompatibilityInformationForLastPlayed() {
             string lastName;
             string lastID;
@@ -123,6 +129,7 @@ namespace DirectDrawCompatibilityChanger
             return compatInfo;
         }
 
+        [SupportedOSPlatform("windows")]
         public static int CheckRegKeyVersion() {
             RegistryKey registryKey = Registry.LocalMachine;
             registryKey = registryKey.OpenSubKey(RegistryDirectDrawPath + @"Compatibility\");

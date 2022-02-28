@@ -44,7 +44,7 @@ namespace DirectDrawCompatibilityChanger
             UpdateGameList();
         }
 
-        void UpdateGameList() {
+        private void UpdateGameList() {
             // clear the list for fresh update
             lstCurrentFixes.Items.Clear();
 
