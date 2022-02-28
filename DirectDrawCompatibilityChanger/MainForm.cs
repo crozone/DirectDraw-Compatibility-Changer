@@ -3,12 +3,6 @@
 
    Updated 2015-06-02:
        Did general cleanup and refactoring, made GUI scalable.
-
-   License: Do whatever you want! If this code will be of an use, by all means use it with or
-            without credit.
-
-            Also, I'm not liable for anything that this code does.
-            Use at your own risk, and may the force be with you.
 */
 
 
