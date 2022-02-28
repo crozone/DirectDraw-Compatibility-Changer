@@ -1,4 +1,4 @@
-﻿namespace DirectDraw_Colourfix
+﻿namespace DirectDrawCompatibilityChanger
 {
     partial class MainForm
     {

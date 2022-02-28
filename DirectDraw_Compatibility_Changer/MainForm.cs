@@ -22,7 +22,7 @@ using System.Windows.Forms;
 using Microsoft.Win32;
 using System.Runtime.InteropServices;
 
-namespace DirectDraw_Colourfix {
+namespace DirectDrawCompatibilityChanger {
     public partial class MainForm : Form {
         public RegEdit Regedit { get; set; }
 

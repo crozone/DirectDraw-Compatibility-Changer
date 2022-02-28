@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Windows.Forms;
 
-namespace DirectDraw_Colourfix
+namespace DirectDrawCompatibilityChanger
 {
     static class Program
     {

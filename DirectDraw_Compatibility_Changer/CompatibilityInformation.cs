@@ -5,7 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Microsoft.Win32;
 
-namespace DirectDraw_Colourfix {
+namespace DirectDrawCompatibilityChanger {
     public class CompatibilityInformation {
         public string KeyName { get; set; }
         public string Name { get; set; }
