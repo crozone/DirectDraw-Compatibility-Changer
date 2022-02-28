@@ -6,8 +6,8 @@ using Microsoft.Win32;
 namespace DirectDrawCompatibilityChanger
 {
     public class RegEdit {
-        public const string RegDDPath = (@"SOFTWARE\Microsoft\DirectDraw\");
-        public const string RegDDPathWow = (@"SOFTWARE\Wow6432Node\Microsoft\DirectDraw\");
+        public const string RegistryDirectDrawPath = (@"SOFTWARE\Microsoft\DirectDraw\");
+        public const string RegistryDirectDrawPathWow = (@"SOFTWARE\Wow6432Node\Microsoft\DirectDraw\");
 
         public bool UseWowNode { get; set; }
 
@@ -16,29 +16,29 @@ namespace DirectDrawCompatibilityChanger
         }
 
         public string[] GetCurrentApps() {
-            RegistryKey Reg = Registry.LocalMachine;
+            RegistryKey registryKey = Registry.LocalMachine;
             if (UseWowNode) {
-                Reg = Reg.OpenSubKey(RegDDPathWow + @"Compatibility\"); // path to 64 bit DirectDraw compatibility 
+                registryKey = registryKey.OpenSubKey(RegistryDirectDrawPathWow + @"Compatibility\"); // path to 64 bit DirectDraw compatibility 
             }
             else {
-                Reg = Reg.OpenSubKey(RegDDPath + @"Compatibility\"); // path to 32 bit DirectDraw compatibility
+                registryKey = registryKey.OpenSubKey(RegistryDirectDrawPath + @"Compatibility\"); // path to 32 bit DirectDraw compatibility
             }
 
-            return Reg.GetSubKeyNames();
+            return registryKey.GetSubKeyNames();
         }
 
         public bool SaveKey(string KeyName, string exeName, byte[] exeID, byte[] exeFlags) {
             try {
-                RegistryKey Reg = Registry.LocalMachine;
+                RegistryKey registryKey = Registry.LocalMachine;
                 if (UseWowNode) {
-                    Reg = Reg.CreateSubKey(RegDDPathWow + @"Compatibility\" + KeyName, RegistryKeyPermissionCheck.ReadWriteSubTree);
+                    registryKey = registryKey.CreateSubKey(RegistryDirectDrawPathWow + @"Compatibility\" + KeyName, RegistryKeyPermissionCheck.ReadWriteSubTree);
                 }
                 else {
-                    Reg = Reg.CreateSubKey(RegDDPath + @"Compatibility\" + KeyName, RegistryKeyPermissionCheck.ReadWriteSubTree);
+                    registryKey = registryKey.CreateSubKey(RegistryDirectDrawPath + @"Compatibility\" + KeyName, RegistryKeyPermissionCheck.ReadWriteSubTree);
                 }
-                Reg.SetValue("Name", exeName, RegistryValueKind.String);
-                Reg.SetValue("ID", exeID, RegistryValueKind.Binary);
-                Reg.SetValue("Flags", exeFlags, RegistryValueKind.Binary);
+                registryKey.SetValue("Name", exeName, RegistryValueKind.String);
+                registryKey.SetValue("ID", exeID, RegistryValueKind.Binary);
+                registryKey.SetValue("Flags", exeFlags, RegistryValueKind.Binary);
             }
             catch (UnauthorizedAccessException) {
                 return false;
@@ -51,14 +51,14 @@ namespace DirectDrawCompatibilityChanger
 
         public bool DeleteKey(string KeyName) {
             try {
-                RegistryKey Reg = Registry.LocalMachine;
+                RegistryKey registryKey = Registry.LocalMachine;
                 if (UseWowNode) {
-                    Reg = Reg.OpenSubKey(RegDDPathWow + @"Compatibility\", true);
+                    registryKey = registryKey.OpenSubKey(RegistryDirectDrawPathWow + @"Compatibility\", true);
                 }
                 else {
-                    Reg = Reg.OpenSubKey(RegDDPath + @"Compatibility\", true);
+                    registryKey = registryKey.OpenSubKey(RegistryDirectDrawPath + @"Compatibility\", true);
                 }
-                Reg.DeleteSubKey(KeyName, false);
+                registryKey.DeleteSubKey(KeyName, false);
             }
             catch (UnauthorizedAccessException) {
                 return false;
@@ -73,50 +73,50 @@ namespace DirectDrawCompatibilityChanger
             CompatibilityInformation compatInfo = new CompatibilityInformation();
 
             compatInfo.KeyName = keyname;
-            RegistryKey Reg = Registry.LocalMachine;
+            RegistryKey registryKey = Registry.LocalMachine;
             if (this.UseWowNode) {
-                Reg = Reg.OpenSubKey(RegDDPathWow + @"Compatibility\" + keyname);
+                registryKey = registryKey.OpenSubKey(RegistryDirectDrawPathWow + @"Compatibility\" + keyname);
             }
             else {
-                Reg = Reg.OpenSubKey(RegDDPath + @"Compatibility\" + keyname);
+                registryKey = registryKey.OpenSubKey(RegistryDirectDrawPath + @"Compatibility\" + keyname);
             }
 
-            compatInfo.Name = (string)Reg.GetValue("Name");
+            compatInfo.Name = (string)registryKey.GetValue("Name");
 
-            if (Reg.GetValueKind("ID") == RegistryValueKind.Binary) {
-                byte[] IDBytes = (byte[])Reg.GetValue("ID");
-                compatInfo.ID = Utilities.ByteArrayToHex(IDBytes);
+            if (registryKey.GetValueKind("ID") == RegistryValueKind.Binary) {
+                byte[] idBytes = (byte[])registryKey.GetValue("ID");
+                compatInfo.ID = Utilities.ByteArrayToHex(idBytes);
             }
-            else if (Reg.GetValueKind("ID") == RegistryValueKind.DWord) {
-                byte[] IDBytes = BitConverter.GetBytes((int)Reg.GetValue("ID"));
-                compatInfo.ID = Utilities.ByteArrayToHex(IDBytes);
+            else if (registryKey.GetValueKind("ID") == RegistryValueKind.DWord) {
+                byte[] idBytes = BitConverter.GetBytes((int)registryKey.GetValue("ID"));
+                compatInfo.ID = Utilities.ByteArrayToHex(idBytes);
             }
 
-            byte[] FlagBytes = (byte[])Reg.GetValue("Flags");
-            compatInfo.Flags = Utilities.ByteArrayToHex(FlagBytes);
+            byte[] flagBytes = (byte[])registryKey.GetValue("Flags");
+            compatInfo.Flags = Utilities.ByteArrayToHex(flagBytes);
 
             return compatInfo;
         }
 
         public CompatibilityInformation GetCompatibilityInformationForLastPlayed() {
-            string LastName;
-            string LastID;
+            string lastName;
+            string lastID;
             // pull the most recent application from the registry
-            RegistryKey Reg = Registry.LocalMachine;
+            RegistryKey registryKey = Registry.LocalMachine;
             if (this.UseWowNode) {
-                Reg = Reg.OpenSubKey(RegDDPathWow + @"MostRecentApplication\");
+                registryKey = registryKey.OpenSubKey(RegistryDirectDrawPathWow + @"MostRecentApplication\");
             }
             else {
-                Reg = Reg.OpenSubKey(RegDDPath + @"MostRecentApplication\");
+                registryKey = registryKey.OpenSubKey(RegistryDirectDrawPath + @"MostRecentApplication\");
             }
-            LastName = (string)Reg.GetValue("Name");
-            byte[] LastIDBytes = BitConverter.GetBytes((int)Reg.GetValue("ID"));
-            LastID = Utilities.ByteArrayToHex(LastIDBytes);
+            lastName = (string)registryKey.GetValue("Name");
+            byte[] LastIDBytes = BitConverter.GetBytes((int)registryKey.GetValue("ID"));
+            lastID = Utilities.ByteArrayToHex(LastIDBytes);
 
             CompatibilityInformation compatInfo = new CompatibilityInformation() {
-                KeyName = LastName.Substring(0, LastName.LastIndexOf(".exe", StringComparison.OrdinalIgnoreCase)),
-                Name = LastName,
-                ID = LastID,
+                KeyName = lastName.Substring(0, lastName.LastIndexOf(".exe", StringComparison.OrdinalIgnoreCase)),
+                Name = lastName,
+                ID = lastID,
                 Flags = ""
             };
 
@@ -124,15 +124,15 @@ namespace DirectDrawCompatibilityChanger
         }
 
         public static int CheckRegKeyVersion() {
-            RegistryKey Reg = Registry.LocalMachine;
-            Reg = Reg.OpenSubKey(RegDDPath + @"Compatibility\");
-            if (Reg == null) {
+            RegistryKey registryKey = Registry.LocalMachine;
+            registryKey = registryKey.OpenSubKey(RegistryDirectDrawPath + @"Compatibility\");
+            if (registryKey == null) {
                 return 0; // check the os actually has the compatibility key (Vista and 7 only), 0 is it doesn't
             }
             else { // now we know its vista/7, check if it's got the Wow32Node (x64)
-                Reg = Registry.LocalMachine;
-                Reg = Reg.OpenSubKey(RegDDPathWow + @"Compatibility\");
-                if (Reg == null) {
+                registryKey = Registry.LocalMachine;
+                registryKey = registryKey.OpenSubKey(RegistryDirectDrawPathWow + @"Compatibility\");
+                if (registryKey == null) {
                     return 1; // the OS is 32 bit, return 1
                 }
                 else {

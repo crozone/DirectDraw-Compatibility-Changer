@@ -36,7 +36,6 @@ namespace DirectDrawCompatibilityChanger
 
             this.Regedit = new RegEdit(useWowNode);
 
-
             InitializeComponent();
         }
 
@@ -64,11 +63,11 @@ namespace DirectDrawCompatibilityChanger
 
         private void lstCurrentFixes_SelectedIndexChanged(object sender, EventArgs e) {
             // get the currently selected game item
-            GameListItem game = (GameListItem)lstCurrentFixes.SelectedItem;
+            GameListItem gameListItem = (GameListItem)lstCurrentFixes.SelectedItem;
 
             // update the GUI
-            if (game != null) {
-                UpdateCompatibilityValues(game.CompatibilityInformation);
+            if (gameListItem != null) {
+                UpdateCompatibilityValues(gameListItem.CompatibilityInformation);
             }
         }
 
