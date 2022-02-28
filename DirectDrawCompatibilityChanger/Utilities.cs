@@ -1,10 +1,7 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
-namespace DirectDrawCompatibilityChanger {
+namespace DirectDrawCompatibilityChanger
+{
     public static class Utilities {
         public static byte[] StringToByteArray(string hex) {
             int NumberChars = hex.Length;

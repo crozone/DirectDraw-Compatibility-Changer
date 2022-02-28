@@ -1,12 +1,10 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Security;
-using System.Text;
-using System.Threading.Tasks;
+
 using Microsoft.Win32;
 
-namespace DirectDrawCompatibilityChanger {
+namespace DirectDrawCompatibilityChanger
+{
     public class RegEdit {
         public const string RegDDPath = (@"SOFTWARE\Microsoft\DirectDraw\");
         public const string RegDDPathWow = (@"SOFTWARE\Wow6432Node\Microsoft\DirectDraw\");
